@@ -28,9 +28,7 @@ module MenuParser
     file_arr = [], split_lines = []
 
     File.open(file_path_string, 'r') do |file|
-      file.each_line do |line|
-        file_arr << line
-      end
+      file.each_line { |line| file_arr << line }
     end
 
     # unusual behavior; deleting empty arrays
