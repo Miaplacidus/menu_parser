@@ -25,23 +25,15 @@ module MenuParser
   # returns an array of arrays where the inner arrays contain
   # the name of each menu item and its price
   def self.parse_by_line(file_path_string)
-    file_arr = [], split_lines = []
+    file_arr = []
 
     File.open(file_path_string, 'r') do |file|
       file.each_line { |line| file_arr << line }
     end
 
-    # unusual behavior; deleting empty arrays
-    file_arr.delete([])
-    return [] if file_arr.empty?
-
     @target_value = file_arr.shift.chomp[1..-1].to_f
 
-    file_arr.each do |line|
-      split_lines << line.split(',')
-    end
-
-    split_lines
+    file_arr.map { |line| line.split(',') }
   end
 
   # returns an array of the menu items
