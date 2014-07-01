@@ -31,7 +31,6 @@ module MenuParser
       file.each_line do |line|
         file_arr << line
       end
-      file.close
     end
 
     # unusual behavior; deleting empty arrays
