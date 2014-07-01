@@ -92,10 +92,7 @@ module MenuParser
   # finds individual price combinations that add up
   # to target value
   def self.price_combo(target, menu_hash)
-    return false if menu_hash.empty?
-    arr = menu_hash.to_a
-    arr.sort!{|v1, v2| v1[1] <=> v2[1]}
-    arr.select!{|val| val[1] <= target}
+    arr = menu_hash.select {|item,price| price <= target}.sort_by {|_, price| price }
 
     sum = 0
     check = []
