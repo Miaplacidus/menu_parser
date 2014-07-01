@@ -1,4 +1,4 @@
-require_relative '../txi_menu.rb'
+require_relative '../lib/txi_menu.rb'
 
 describe "Menu Parser" do
 
