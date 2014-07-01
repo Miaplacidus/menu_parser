@@ -44,14 +44,9 @@ module MenuParser
 
   #returns an array of the menu prices
   def self.get_prices(file_arr)
-    price_arr = []
-    price_string = ""
-    file_arr.each do |menu_line|
-      price_string = menu_line[1].chomp
-      price_float = price_string[1..-1].to_f
-      price_arr << price_float
+    file_arr.map do |item, price|
+      price.gsub('$', '').to_f
     end
-    price_arr
   end
 
   # returns a hash of the menu where the keys are items
