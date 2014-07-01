@@ -1,85 +1,53 @@
 module MenuParser
-  @@target_value = 0
-  @@found_combos = []
+  @target_value = 0
+  @found_combos = []
 
   def self.parse_menu(file_path_string)
     split_file = parse_by_line(file_path_string)
     menu_items = get_items(split_file)
     menu_prices = get_prices(split_file)
     menu_hashed = hash_menu(menu_items, menu_prices)
-    dish_combo = price_combo(@@target_value, menu_hashed)
+    dish_combo = price_combo(@target_value, menu_hashed)
 
     if dish_combo
-      @@found_combos << dish_combo
+      @found_combos << dish_combo
       gather_all_combos(dish_combo, menu_hashed)
     end
 
-    @@found_combos.uniq!
-    delete_duplicates(@@found_combos)
-    formatted_response(@@found_combos)
+    @found_combos.uniq!
+    delete_duplicates(@found_combos)
+    formatted_response(@found_combos)
 
-    @@target_value = 0
-    @@found_combos = []
+    @target_value = 0
+    @found_combos = []
   end
 
   # returns an array of arrays where the inner arrays contain
   # the name of each menu item and its price
   def self.parse_by_line(file_path_string)
-    file_arr = [], split_lines = []
-    menu_items = [], prices = []
+    f = File.open(file_path_string, 'r')
 
-    File.open(file_path_string, 'r') do |file|
-      file.each_line do |line|
-        file_arr << line
-      end
-      file.close
-    end
+    @target_value = f.first.to_i
 
-    # unusual behavior; deleting empty arrays
-    file_arr.delete([])
-    return [] if file_arr.empty?
-
-    @@target_value = file_arr.shift.chomp[1..-1].to_f
-
-    file_arr.each do |line|
-      split_lines << line.split(',')
-    end
-
-    split_lines
+    f.to_a.map { |line| line.split(',') }
   end
 
   # returns an array of the menu items
   def self.get_items(file_arr)
-    item_arr = []
-    file_arr.each do |menu_line|
-      item_arr << menu_line[0]
-    end
-
-    item_arr
+    file_arr.map(&:first)
   end
 
   #returns an array of the menu prices
   def self.get_prices(file_arr)
-    price_arr = []
-    price_string = ""
-    file_arr.each do |menu_line|
-      price_string = menu_line[1].chomp
-      price_float = price_string[1..-1].to_f
-      price_arr << price_float
+    file_arr.map do |item, price|
+      price.gsub('$', '').to_f
     end
-    price_arr
   end
 
   # returns a hash of the menu where the keys are items
   # and the values are prices
   def self.hash_menu(item_arr, price_arr)
-    menu_hash = {}
-
-    (0...item_arr.length).each do |index|
-      menu_hash[item_arr[index]] = price_arr[index]
-    end
-
-    menu_hash
+    Hash[item_arr.zip(price_arr)]
   end
 
   # compiles all possible combinations such that
@@ -88,15 +56,15 @@ module MenuParser
     combo_arr.each do |item|
       menu_hash_clone = menu_hash.clone
       menu_hash_clone.delete(item[0])
-      new_combo = price_combo(@@target_value, menu_hash_clone)
+      new_combo = price_combo(@target_value, menu_hash_clone)
 
       if new_combo
-        @@found_combos << new_combo
+        @found_combos << new_combo
         gather_all_combos(new_combo, menu_hash_clone)
       end
     end
 
-    @@found_combos
+    @found_combos
   end
 
   # deletes duplicate combinations from the list
@@ -124,10 +92,7 @@ module MenuParser
   # finds individual price combinations that add up
   # to target value
   def self.price_combo(target, menu_hash)
-    return false if menu_hash.empty?
-    arr = menu_hash.to_a
-    arr.sort!{|v1, v2| v1[1] <=> v2[1]}
-    arr.select!{|val| val[1] <= target}
+    arr = menu_hash.select {|item,price| price <= target}.sort_by {|_, price| price }
 
     sum = 0
     check = []
@@ -166,8 +131,8 @@ module MenuParser
   # prints a formatted list of price combinations
   def self.formatted_response(all_combos)
     count = 0
-    puts "Target Value = $#{sprintf('%.2f', @@target_value)}"
-    puts "No combinations possible that equal $#{sprintf('%.2f', @@target_value)}" if all_combos.empty?
+    puts "Target Value = $#{sprintf('%.2f', @target_value)}"
+    puts "No combinations possible that equal $#{sprintf('%.2f', @target_value)}" if all_combos.empty?
 
     all_combos.each do |combo|
       count+=1
@@ -181,11 +146,11 @@ module MenuParser
 
 # FOR TESTING PURPOSES
   # def self.set_found(arr_val)
-  #   @@found_combos << arr_val
+  #   @found_combos << arr_val
   # end
 
   # def self.set_target(value)
-  #   @@target_value = value
+  #   @target_value = value
   # end
 
 end
