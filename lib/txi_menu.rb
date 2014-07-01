@@ -34,12 +34,7 @@ module MenuParser
 
   # returns an array of the menu items
   def self.get_items(file_arr)
-    item_arr = []
-    file_arr.each do |menu_line|
-      item_arr << menu_line[0]
-    end
-
-    item_arr
+    file_arr.map(&:first)
   end
 
   #returns an array of the menu prices
