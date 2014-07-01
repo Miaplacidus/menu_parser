@@ -31,7 +31,7 @@ module MenuParser
       file.each_line { |line| file_arr << line }
     end
 
-    @target_value = file_arr.shift.chomp[1..-1].to_f
+    @target_value = file_arr.shift.to_f
 
     file_arr.map { |line| line.split(',') }
   end
