@@ -1,25 +1,25 @@
 module MenuParser
-  @@target_value = 0
-  @@found_combos = []
+  @target_value = 0
+  @found_combos = []
 
   def self.parse_menu(file_path_string)
     split_file = parse_by_line(file_path_string)
     menu_items = get_items(split_file)
     menu_prices = get_prices(split_file)
     menu_hashed = hash_menu(menu_items, menu_prices)
-    dish_combo = price_combo(@@target_value, menu_hashed)
+    dish_combo = price_combo(@target_value, menu_hashed)
 
     if dish_combo
-      @@found_combos << dish_combo
+      @found_combos << dish_combo
       gather_all_combos(dish_combo, menu_hashed)
     end
 
-    @@found_combos.uniq!
-    delete_duplicates(@@found_combos)
-    formatted_response(@@found_combos)
+    @found_combos.uniq!
+    delete_duplicates(@found_combos)
+    formatted_response(@found_combos)
 
-    @@target_value = 0
-    @@found_combos = []
+    @target_value = 0
+    @found_combos = []
   end
 
   # returns an array of arrays where the inner arrays contain
@@ -39,7 +39,7 @@ module MenuParser
     file_arr.delete([])
     return [] if file_arr.empty?
 
-    @@target_value = file_arr.shift.chomp[1..-1].to_f
+    @target_value = file_arr.shift.chomp[1..-1].to_f
 
     file_arr.each do |line|
       split_lines << line.split(',')
@@ -88,15 +88,15 @@ module MenuParser
     combo_arr.each do |item|
       menu_hash_clone = menu_hash.clone
       menu_hash_clone.delete(item[0])
-      new_combo = price_combo(@@target_value, menu_hash_clone)
+      new_combo = price_combo(@target_value, menu_hash_clone)
 
       if new_combo
-        @@found_combos << new_combo
+        @found_combos << new_combo
         gather_all_combos(new_combo, menu_hash_clone)
       end
     end
 
-    @@found_combos
+    @found_combos
   end
 
   # deletes duplicate combinations from the list
@@ -166,8 +166,8 @@ module MenuParser
   # prints a formatted list of price combinations
   def self.formatted_response(all_combos)
     count = 0
-    puts "Target Value = $#{sprintf('%.2f', @@target_value)}"
-    puts "No combinations possible that equal $#{sprintf('%.2f', @@target_value)}" if all_combos.empty?
+    puts "Target Value = $#{sprintf('%.2f', @target_value)}"
+    puts "No combinations possible that equal $#{sprintf('%.2f', @target_value)}" if all_combos.empty?
 
     all_combos.each do |combo|
       count+=1
@@ -181,11 +181,11 @@ module MenuParser
 
 # FOR TESTING PURPOSES
   # def self.set_found(arr_val)
-  #   @@found_combos << arr_val
+  #   @found_combos << arr_val
   # end
 
   # def self.set_target(value)
-  #   @@target_value = value
+  #   @target_value = value
   # end
 
 end
