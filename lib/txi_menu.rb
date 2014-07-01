@@ -47,13 +47,7 @@ module MenuParser
   # returns a hash of the menu where the keys are items
   # and the values are prices
   def self.hash_menu(item_arr, price_arr)
-    menu_hash = {}
-
-    (0...item_arr.length).each do |index|
-      menu_hash[item_arr[index]] = price_arr[index]
-    end
-
-    menu_hash
+    Hash[item_arr.zip(price_arr)]
   end
 
   # compiles all possible combinations such that
