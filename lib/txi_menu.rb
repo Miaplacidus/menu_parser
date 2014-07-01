@@ -26,7 +26,6 @@ module MenuParser
   # the name of each menu item and its price
   def self.parse_by_line(file_path_string)
     file_arr = [], split_lines = []
-    menu_items = [], prices = []
 
     File.open(file_path_string, 'r') do |file|
       file.each_line do |line|
